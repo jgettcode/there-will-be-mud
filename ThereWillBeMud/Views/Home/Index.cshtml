@@ -24,7 +24,11 @@
             <div class="card-body">
                 @using (Html.BeginForm("Index", "Home"))
                 {
-                    <p class="h6">Check to see if it will be muddy three days from now.<br>Enter your city, state, and country and click the Check button.</p>
+                    <p class="h6">
+                        <div>Check to see if it will be muddy three days from now.</div>
+                        <div>Enter your city, state, and country and click the Check button.</div>
+                        <div>Weather data provider by <a href="https://openweathermap.org/">openweathermap.org</a></div>
+                    </p>
 
                     <div class="mb-3">
                         @Html.TextBoxFor(x => x.City, new { placeholder = "City", @class = "form-control" })
