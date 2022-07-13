@@ -14,16 +14,16 @@ public class OpenWeatherResponse
 
     public int StatusCode => Convert.ToInt32(GetNodeNullSafe(_jobj, "cod").GetValue<string>());
 	
-	public IEnumerable<OpenWeatherInfo> GetWeatherInfo()
+	public IEnumerable<WeatherInfo> GetWeatherInfo()
 	{
         var list = _jobj["list"];
         if (list == null)
-            return new List<OpenWeatherInfo>();
+            return new List<WeatherInfo>();
         else
 		    return list.AsArray().Select(CreateOpenWeatherInfo).ToList();
 	}
 	
-	private OpenWeatherInfo CreateOpenWeatherInfo(JsonNode? jn)
+	private WeatherInfo CreateOpenWeatherInfo(JsonNode? jn)
 	{
         if (jn == null)
             throw new ArgumentNullException("jn");
@@ -35,7 +35,7 @@ public class OpenWeatherResponse
         var rainVol3h = GetVolume3h(jn, "rain");
         var snowVol3h = GetVolume3h(jn, "snow");
 
-		var result = new OpenWeatherInfo
+		var result = new WeatherInfo
 		{
 			Date = dt,
 			TemperatureC = temp,
