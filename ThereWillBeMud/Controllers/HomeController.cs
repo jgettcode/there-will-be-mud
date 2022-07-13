@@ -13,14 +13,32 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
-        return View();
+        var model = new HomeModel { City = "Chelsea", State = "MI", Country = "USA" };
+        return View(model);
     }
 
-    public IActionResult Privacy()
+    [HttpPost]
+    public async Task<IActionResult> Index(HomeModel model)
     {
-        return View();
+        if (string.IsNullOrEmpty(model.City))
+            throw new Exception("City is required");
+        if (string.IsNullOrEmpty(model.Country))
+            throw new Exception("Country is required");
+
+        // this should be stored in a config file...
+        var wc = new OpenWeatherClient("aa10c577335449056c4db1a4bb52df73");
+        var query = string.Join(",", model.City, model.State, model.Country);
+        var resp = await wc.GetResponseAsync(query);
+        
+        if (resp.StatusCode != 200)
+            throw new Exception($"Bad status code from API: {resp.StatusCode}");
+
+        model.WeatherInfo = resp.GetWeatherInfo();
+
+        return View(model);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

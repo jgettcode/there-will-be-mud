@@ -1,8 +1,55 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model ThereWillBeMud.Models.HomeModel
+@{
+    var states = new string[] {"","AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"};
+    List<SelectListItem> stateItems = states.Select(x => new SelectListItem(x, x)).ToList();
+
+    string message = string.Empty;
+
+    if (Model.WeatherInfo.Count() > 0)
+    {
+        if (Model.WillThereBeMud())
+            message = $"YES! There will be mud on {Model.GetFutureDate():M/d/yyyy} in {Model.City}.";
+        else
+            message = $"There will be no mud on {Model.GetFutureDate():M/d/yyyy} in {Model.City}.";
+    }
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4 title">There Will Be Mud</h1>    
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm("Index", "Home"))
+                {
+                    <p class="h6">Check to see if it will be muddy three days from now.<br>Enter your city, state, and country and click the Check button.</p>
+
+                    <div class="mb-3">
+                        @Html.TextBoxFor(x => x.City, new { placeholder = "City", @class = "form-control" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.DropDownListFor(x => x.State, stateItems, null, new { @class = "form-select" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.TextBoxFor(x => x.Country, new { placeholder = "Country", @class = "form-control" })
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Check</button>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <p class="h3">@message</p>
+                    <ul>
+                        <li>Total rain: @Model.TotalRainVolume().ToString("#0.00") mm</li>
+                        <li>Total snow: @Model.TotalSnowVolume().ToString("#0.00") mm</li>
+                        <li>Max temperature: @Model.MaxTemperatureC().ToString("#0.00") &deg;C (@Model.MaxTemperatureF().ToString("#0.00") &deg;F)</li>
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
 </div>
