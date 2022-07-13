@@ -16,3 +16,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+@font-face {
+  font-family: UnifracturCook-Bold;
+  src: url(UnifrakturCook-Bold.ttf);
+}
+
+.title {
+  font-family: UnifracturCook-Bold;
+}
