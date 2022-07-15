@@ -30,7 +30,7 @@ It will be muddy if the weather forecast predicts some rain or snow precipitatio
 
 1. Build the docker image (in the same root directory as above)
 
-`docker build -f "Dockerfile.tests -t "therewillbemud_tests:latest" .`
+`docker build -f "Dockerfile.tests" -t "therewillbemud_tests:latest" .`
 
 2. Run the docker image
 
