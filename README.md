@@ -35,3 +35,9 @@ It will be muddy if the weather forecast predicts some rain or snow precipitatio
 2. Run the docker image
 
 `docker run therewillbemud_tests:latest`
+
+3. The final line of output should start with this:
+
+```
+Passed!  - Failed:     0, Passed:     8
+```
