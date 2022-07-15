@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace ThereWillBeMud;
@@ -5,14 +6,67 @@ namespace ThereWillBeMud;
 // This class is a wrapper for the JsonObject returned by the API call.
 public class OpenWeatherResponse
 {
-	private readonly JsonObject _jobj;
+	private readonly JsonObject? _jobj;
 	
+	public OpenWeatherResponse() {}
+
 	public OpenWeatherResponse(JsonObject jobj)
 	{
 		_jobj = jobj;
 	}
 
-    public int StatusCode => Convert.ToInt32(GetNodeNullSafe(_jobj, "cod").GetValue<string>());
+    public int StatusCode
+	{
+		get
+		{
+			// sometimes the API returns a number as string (e.g. "200") or a number (e.g. 401)
+			// so this code handles either case, and always returns int
+
+			int result = 0;
+
+			JsonElement je = GetNodeNullSafe(_jobj, "cod").GetValue<JsonElement>();
+
+			if (je.ValueKind == JsonValueKind.Number)
+			{
+				result = je.GetInt32();
+			}
+			else
+			{
+				var s = je.GetString();
+				if (s != null)
+					result = Convert.ToInt32(s);
+			}
+
+			return result;
+		}
+	}
+	
+
+	public string Message
+	{
+		get
+		{
+			string result = string.Empty;
+
+			JsonElement je = GetNodeNullSafe(_jobj, "message").GetValue<JsonElement>();
+			
+			if (je.ValueKind == JsonValueKind.Number)
+			{
+				var v = je.GetInt32();
+				if (v != 0)
+					result = v.ToString();
+			}
+			else
+			{
+				var s = je.GetString();
+				if (s != null)
+					result = s;
+			}
+
+			return result;
+		}
+	}
+
 	
 	public IEnumerable<WeatherInfo> GetWeatherInfo()
 	{

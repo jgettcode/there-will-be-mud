@@ -9,27 +9,37 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        var model = new HomeModel { City = "Chelsea", State = "MI", Country = "USA" };
+        // using these defaults, this should be populated in a better way...
+        var model = new HomeModel { City = "Ann Arbor", State = "MI", Country = "USA" };
+        ViewBag.Error = string.Empty;
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> Index(HomeModel model)
     {
+        var error = string.Empty;
+
         if (string.IsNullOrEmpty(model.City))
-            throw new Exception("City is required");
+            error = "City is required.";
         if (string.IsNullOrEmpty(model.Country))
-            throw new Exception("Country is required");
-
-        // this should be stored in a config file...
-        var wc = new OpenWeatherClient("aa10c577335449056c4db1a4bb52df73");
-        var query = string.Join(",", model.City, model.State, model.Country);
-        var resp = await wc.GetResponseAsync(query);
+            error = "Country is required.";
         
-        if (resp.StatusCode != 200)
-            throw new Exception($"Bad status code from API: {resp.StatusCode}");
+        if (string.IsNullOrEmpty(error))
+        {
+            // the apikey should be stored in a config file or something...
+            var wc = new OpenWeatherClient("aa10c577335449056c4db1a4bb52df73");
 
-        model.WeatherInfo = resp.GetWeatherInfo();
+            var query = string.Join(",", model.City, model.State, model.Country);
+            var resp = await wc.GetResponseAsync(query);
+            
+            if (resp.StatusCode == 200)
+                model.WeatherInfo = resp.GetWeatherInfo();
+            else
+                error = resp.Message;
+        }
+
+        ViewBag.Error = error;
 
         return View(model);
     }

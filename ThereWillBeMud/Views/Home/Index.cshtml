@@ -1,5 +1,7 @@
 ﻿@model ThereWillBeMud.Models.HomeModel
 @{
+    string error = ViewBag.Error;
+
     var states = new string[] {"","AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"};
     List<SelectListItem> stateItems = states.Select(x => new SelectListItem(x, x)).ToList();
 
@@ -22,6 +24,13 @@
     <div class="col-md-8 offset-md-2">
         <div class="card">
             <div class="card-body">
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @error
+                    </div>
+                }
+
                 @using (Html.BeginForm("Index", "Home"))
                 {
                     <p class="h6">
